@@ -1,12 +1,19 @@
 ---
 name: pumascan
-description: A command line interface (CLI) tool for scanning C# projects and solutions for security vulnerabilities using Puma Scan Professional.
-allowed-tools: Bash, PowerShell, Grep, Glob, Read, WebFetch
+description: A command line interface (CLI) tool for scanning C# projects and solutions for security vulnerabilities using Puma Scan Server Edition. Use this skill when the user asks to scan a C# project or solution for security vulnerabilities, manage Puma Scan findings, or fix vulnerabilities in C# code.
+allowed-tools: Bash, Grep, Glob, Read, WebFetch
+version: 1.0
 ---
 
 # pumascan CLI
 
 `pumascan` is a .NET C# code analysis tool that analyzes C# projects and solutions for security vulnerabilities.
+
+## Prerequisites
+
+- [Puma Scan Server Edition](https://pumasecurity.io) (`pumascan`) must be installed and licensed to use this skill.
+- Run `pumascan --version` to verify installation is found.
+- Run `pumascan scan --system-information` and ensure the `LicenseKey` is found to verify the Server Edition's license file is installed.
 
 ## Commands
 
@@ -37,7 +44,6 @@ pumascan scan \
 | `-s, --settings` | Path to settings file (`.pumafile` or `settings.json`) |
 | `-v, --verbose` | Verbose console output (instance details, errors) |
 | `-l, --license` | Directory containing offline license file |
-| `-a, --auth-token` | Pipeline JWT for org/repo metadata |
 | `--threshold-high` | Max high-risk findings before failing exit code |
 | `--threshold-medium` | Max medium-risk findings before failing exit code |
 | `--threshold-low` | Max low-risk findings before failing exit code |
@@ -144,11 +150,11 @@ Exit code: 0 - Success
 
 In CI/CD, any non-zero exit code fails the pipeline step.
 
-**Threshold behavior:**
+**Exit Code Behavior:**
 
-- Thresholds are evaluated in order: high, then medium, then low
+- Without thresholds defined, the exit code is based on the rule id (SEC###) findings. If any findings have a Severity set to `Error`, the exit code will be non-zero. Otherwise, the exit code is 0 if scan completes successfully regardless of findings.
+- With thresholds defined, they are evaluated in order: high, then medium, then low.
 - Evaluation stops at the first failure — e.g. if medium fails, low is not checked
-- When no thresholds are specified, only an "Error severity" threshold of 0 is applied
 - Each threshold line in output shows the limit and actual count, with pass/fail status
 
 ### scan --system-information
@@ -196,7 +202,7 @@ This is a standalone command — no `-p`, `-f`, or `-o` flags are needed.
 
 ### add-exception
 
-Add a suppression entry to the `Exceptions` array in the project's `.pumafile`. Used to suppress false positives or accepted risks.
+Modifies the project's `.pumafile` to suppress a finding — for false positives or accepted risks.
 
 ```bash
 pumascan add-exception \
@@ -208,7 +214,7 @@ pumascan add-exception \
   --reason "approved by security as an exception"
 ```
 
-The command finds the `.pumafile` associated with the project and appends an exception entry with the diagnostic IDs, path, line range, approver (from current user), reason, and timestamp.
+The command finds the `.pumafile` associated with the project and appends an exception entry with the diagnostic IDs, path, line range, approver (from current user), reason, and timestamp. The command will modify the `.pumafile` directly. Use `git diff` to preview the changes for the user and ask them to accept the changes. If the user rejects the changes, revert the changes to the `.pumafile`.
 
 **Required flags:**
 
@@ -363,5 +369,24 @@ The `.pumafile` is a JSON configuration file with these top-level sections:
 - The `-o` output path should omit the file extension — pumascan appends it based on `-f`
 - Multiple formats can be comma-separated in `-f` to generate multiple output files
 - The `.pumafile` is a JSON config controlling rule severity, risk ratings, and enable/disable per rule
-- License validation requires either `PUMA_LICENSE`/`PUMA_AUTH_TOKEN` env vars or the `-l`/`-a` flags
+- License validation requires the license file to be installed on the machine, the `PUMA_LICENSE` env var or `-l` flag pointing at the Server Edition's license file
 - **Only load when the user requests more information about advanced configuration or the full ruleset**: see [Puma Scan Online Documentation](./references/documentation.md).
+
+## Agentic end-to-end flow
+
+Start by scanning the project(s) or solution:
+
+```bash
+pumascan scan \
+  --projects /path/to/src/MyApp.csproj \
+  --format json \
+  --output /path/to/output/myapp-scan \
+  --settings /path/to/.pumafile
+```
+
+Then iterate over the findings in the output JSON file (e.g. `myapp-scan.json`). For each finding, ask the user whether they want to fix the vulnerability or add an exception:
+
+- **Fix** — provide code snippets and remediation instructions. If you are unsure how to fix a given rule, consult the [Puma Scan Rules Documentation](./references/documentation.md).
+- **Except** — use the `add-exception` command with the appropriate flags to suppress the finding in the `.pumafile`.
+
+After resolving the batch, re-scan the project to verify the findings are resolved.
