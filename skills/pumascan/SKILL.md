@@ -23,7 +23,7 @@ Run a security scan against one or more .NET projects or solutions. Since `scan`
 
 ```bash
 pumascan scan \
-  --projects /path/to/MyApp.csproj \
+  -p /path/to/MyApp.csproj \
   --format json,html \
   --output /path/to/output/myapp-scan \
   --settings /path/to/.pumafile
@@ -33,7 +33,7 @@ pumascan scan \
 
 | Flag | Description |
 |------|-------------|
-| `-p, --projects` | Comma-separated list of `.csproj` files or `.sln` files to scan |
+| `-p`, `--projects` (Linux), `--project` (Windows) | Comma-separated list of `.csproj` files or `.sln` files to scan. Prefer `-p` for portability across platforms. |
 | `-f, --format` | Output format(s): `json`, `html`, `msbuild`, `vso`, `trx`, `csv`, `sonarcloud`, `sarif` |
 | `-o, --output` | Output path without extension (extension added automatically per format) |
 
@@ -55,7 +55,7 @@ pumascan scan \
 ```bash
 # Scan a project, output JSON and HTML, with custom settings
 pumascan scan \
-  --projects /path/to/src/MyApp.csproj \
+  -p /path/to/src/MyApp.csproj \
   --format json,html \
   --output /path/to/output/myapp-scan \
   --settings /path/to/.pumafile
@@ -76,7 +76,7 @@ pumascan scan \
 # Thresholds are evaluated in order (high, medium, low) and stop at first failure.
 # Exit code 0 = all passed, non-zero = a threshold was exceeded (e.g. 7 = ThresholdMedium).
 pumascan scan \
-  --projects /path/to/src/MyApp.csproj \
+  -p /path/to/src/MyApp.csproj \
   --format json,html \
   --output /path/to/output/myapp-scan \
   --settings /path/to/.pumafile \
@@ -206,7 +206,7 @@ Modifies the project's `.pumafile` to suppress a finding — for false positives
 
 ```bash
 pumascan add-exception \
-  --projects /path/to/src/MyApp.csproj \
+  -p /path/to/src/MyApp.csproj \
   --diagnostics SEC0017 \
   --file-path src/MyApp/Constants/PasswordOptions.cs \
   --begin-line 10 \
@@ -220,7 +220,7 @@ The command finds the `.pumafile` associated with the project and appends an exc
 
 | Flag | Description |
 |------|-------------|
-| `-p, --projects` | Comma-separated list of `.csproj` files |
+| `-p`, `--projects` (Linux), `--project` (Windows) | Comma-separated list of `.csproj` files. Prefer `-p` for portability across platforms. |
 
 **Optional flags:**
 
@@ -378,7 +378,7 @@ Start by scanning the project(s) or solution:
 
 ```bash
 pumascan scan \
-  --projects /path/to/src/MyApp.csproj \
+  -p /path/to/src/MyApp.csproj \
   --format json \
   --output /path/to/output/myapp-scan \
   --settings /path/to/.pumafile
