@@ -1,0 +1,34 @@
+{
+  "name": "puma-security",
+  "owner": {
+    "name": "Puma Security",
+    "email": "git@pumasecurity.io"
+  },
+  "metadata": {
+    "description": "Puma Security AI skills for Claude Code",
+    "version": "1.0.0"
+  },
+  "plugins": [
+    {
+      "name": "pumascan",
+      "description": "Scan C# projects and solutions for security vulnerabilities using Puma Scan Server Edition.",
+      "source": "./",
+      "strict": false,
+      "skills": [
+        "./skills/pumascan"
+      ],
+      "keywords": [
+        "code scan",
+        "csharp",
+        "dotnet",
+        "owasp",
+        "puma",
+        "pumascan",
+        "secure coding",
+        "security",
+        "sast",
+        "static analysis"
+      ]
+    }
+  ]
+}
