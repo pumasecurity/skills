@@ -15,7 +15,7 @@ Add the Puma Security marketplace to Claude Code, then install the `pumascan` pl
 
 ```bash
 /plugin marketplace add pumasecurity/skills
-/plugin install pumascan@puma-security
+/plugin install pumascan@pumasecurity
 ```
 
 ### Skill Overview
