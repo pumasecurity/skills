@@ -9,6 +9,15 @@ Centralized repository of AI skills for integrating Puma Security's tools and ex
 - [Puma Scan Server Edition](https://pumasecurity.io) CLI (`pumascan`) installed and licensed
 - .NET SDK installed (required by `pumascan` to load projects)
 
+### Installation
+
+Add the Puma Security marketplace to Claude Code, then install the `pumascan` plugin:
+
+```bash
+/plugin marketplace add pumasecurity/skills
+/plugin install pumascan@puma-security
+```
+
 ### Skill Overview
 
 The [Puma Scan Skill](skills/pumascan/SKILL.md) provides AI agents with the ability to run `pumascan` CLI commands from their agentic sessions. Instructions for running the `scan` command, adding exceptions, and checking the version are included in the skill documentation.
