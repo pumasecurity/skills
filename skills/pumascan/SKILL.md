@@ -33,7 +33,7 @@ pumascan scan \
 
 | Flag | Description |
 |------|-------------|
-| `-p`, `--projects` (Linux), `--project` (Windows) | Comma-separated list of `.csproj` files or `.sln` files to scan. Prefer `-p` for portability across platforms. |
+| `-p`, `--projects` (Linux), `--project` (Windows) | `.csproj` or `.sln` file(s) to scan. On Linux, `--projects` accepts a comma-separated list. On Windows, `--project` accepts a single project or solution only. Prefer `-p` for portability across platforms. |
 | `-f, --format` | Output format(s): `json`, `html`, `msbuild`, `vso`, `trx`, `csv`, `sonarcloud`, `sarif` |
 | `-o, --output` | Output path without extension (extension added automatically per format) |
 
@@ -60,7 +60,7 @@ pumascan scan \
   --output /path/to/output/myapp-scan \
   --settings /path/to/.pumafile
 
-# Scan multiple projects, SARIF output
+# Scan multiple projects, SARIF output (Linux only — Windows accepts one project per invocation)
 pumascan scan \
   -p /path/to/Web.csproj,/path/to/Api.csproj \
   -f sarif \
@@ -220,7 +220,7 @@ The command finds the `.pumafile` associated with the project and appends an exc
 
 | Flag | Description |
 |------|-------------|
-| `-p`, `--projects` (Linux), `--project` (Windows) | Comma-separated list of `.csproj` files. Prefer `-p` for portability across platforms. |
+| `-p`, `--projects` (Linux), `--project` (Windows) | `.csproj` file(s) whose `.pumafile` will be modified. On Linux, `--projects` accepts a comma-separated list. On Windows, `--project` accepts a single project only. Prefer `-p` for portability across platforms. |
 
 **Optional flags:**
 
